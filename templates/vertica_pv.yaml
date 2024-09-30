@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: verticadb-pv1
+spec:
+  storageClassName: standard-rwo
+  capacity:
+    storage: "10Gi"
+  accessModes:
+    - ReadWriteOnce
+  local:
+    path: /mnt/home/data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - gke-cluster-1-default-pool-e9f147e6-7jgf
+                - gke-cluster-1-default-pool-e9f147e6-tkc4

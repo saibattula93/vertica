@@ -1,0 +1,20 @@
+verticaDB:
+  subclusters:
+      resources:
+        limits:
+          cpu: "3"
+          memory: "30Gi"
+        requests:
+          cpu: "2"
+          memory: "10Gi"
+
+persistentVolume:
+  spec:
+    capacity:
+      storage: 100Gi
+
+persistentVolumeClaim:
+  spec:
+    resources:
+      requests:
+        storage: 100Gi
