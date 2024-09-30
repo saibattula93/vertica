@@ -4,9 +4,9 @@ metadata:
   name: verticadb-pvc
   namespace: vertica
 spec:
-  storageClassName: standard-rwo
+  storageClassName: longhorn
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
-      storage: "10Gi"
+      storage: {{ .Values.persistentVolumeClaim.spec.resources.requests.storage }}
