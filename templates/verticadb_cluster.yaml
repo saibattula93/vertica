@@ -15,82 +15,11 @@ spec:
           cpu: {{ .Values.verticaDB.subclusters.resources.requests.cpu }}
           memory: {{ .Values.verticaDB.subclusters.resources.requests.memory }}
   communal:
-    path: "/mnt/home/test/vertica2"
+    path: "/home/test/vertica/vertica_data/vertica"
   volumeMounts:
     - name: communal-storage
-      mountPath: "/mnt/home/test/vertica2"
+      mountPath: "/home/test/vertica/vertica_data/vertica"
   volumes:
     - name: communal-storage
       persistentVolumeClaim:
         claimName: verticadb-pvc
-
-
-apiVersion: vertica.com/v1
-kind: VerticaDB
-metadata:
-  name: verticadb
-  namespace: vertica
-spec:
-  communal:
-    path: "gs://verticadb-bucket/verticadb-data"
-    endpoint: "https://storage.googleapis.com"
-    credentialSecret: gs-creds
-    region: US-EAST1
-  subclusters:
-    - name: sc1
-      size: 3
-      resources:
-        limits:
-          cpu: "1"
-          memory: "6Gi"
-        requests:
-          cpu: "1"
-          memory: "4Gi"
-  volumeMounts:
-    - name: communal-storage
-      mountPath: "/mnt/home/data"
-  volumes:
-    - name: communal-storage
-      persistentVolumeClaim:
-        claimName: verticadb-pv2
-
-
-
-apiVersion: vertica.com/v1
-kind: VerticaDB
-metadata:
-  name: verticadb
-  namespace: vertica
-spec:
-  communal:
-    path: "gs://verticadb-bucket/verticadb-data"
-    endpoint: "https://storage.googleapis.com"
-    credentialSecret: gs-creds
-    region: US-EAST1
-  subclusters:
-    - name: sc1
-      size: 3
-  #     resources:
-  #       limits:
-  #         cpu: "1"
-  #         memory: "6Gi"
-  #       requests:
-  #         cpu: "1"
-  #         memory: "4Gi"
-  # volumeMounts:
-  #   - name: verticadb-p
-
-
-
-  apiVersion: vertica.com/v1
-kind: VerticaDB
-metadata:
-  name: verticadb
-  namespace: vertica
-spec:
-  communal:
-    path: "webhdfs://your-hdfs-path/verticadb-data"
-    credentialSecret: hdfs-creds  # For HDFS credentials (if needed)
-  subclusters:
-    - name: sc1
-      size: 3
