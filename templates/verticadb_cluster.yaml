@@ -15,10 +15,10 @@ spec:
           cpu: {{ .Values.verticaDB.subclusters.resources.requests.cpu }}
           memory: {{ .Values.verticaDB.subclusters.resources.requests.memory }}
   communal:
-    path: "/home/test/vertica/vertica_data/vertica"
+    path: "/home/test/vertica/vertica_data/vertica1"
   volumeMounts:
     - name: communal-storage
-      mountPath: "/home/test/vertica/vertica_data/vertica"
+      mountPath: "/home/test/vertica/vertica_data/vertica1"
   volumes:
     - name: communal-storage
       persistentVolumeClaim:
