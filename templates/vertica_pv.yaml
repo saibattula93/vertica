@@ -9,7 +9,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   local:
-    path: /home/test/vertica/vertica_data/vertica
+    path: /home/test/vertica/vertica_data/vertica1
   nodeAffinity:
     required:
       nodeSelectorTerms:
