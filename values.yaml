@@ -11,10 +11,10 @@ verticaDB:
 persistentVolume:
   spec:
     capacity:
-      storage: 100Gi
+      storage: 500Gi
 
 persistentVolumeClaim:
   spec:
     resources:
       requests:
-        storage: 100Gi
+        storage: 500Gi
