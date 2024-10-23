@@ -68,7 +68,7 @@ verticaBackup:
 
 
 verticaRestore:
-  enabled: true
+  enabled: false
   name: vdb-restore
   ignoreClusterLease: "true"
   initPolicy: Revive   # This sets the restore policy
@@ -90,7 +90,7 @@ verticaRestore:
 
 
 verticaJob:
-  enabled: true
+  enabled: false
   metadataName: vertica-create-user # Metadata name for the Job resource
   serviceAccountName: vertica-backup # Service account to use for the Job
   
