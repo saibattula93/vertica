@@ -17,8 +17,7 @@ spec:
           cpu: "{{ .resources.requests.cpu }}"
           memory: "{{ .resources.requests.memory }}"
 {{- end }}
-  image:
-    repository: {{ .Values.verticaDB.image.repository }}
+  image: {{ .Values.verticaDB.image }}
   local:
     requestSize: "{{ .Values.verticaDB.local.requestSize }}"
   communal:
