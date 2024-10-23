@@ -19,8 +19,7 @@ verticaDB:
 
   # Image information for the VerticaDB
   image:
-    repository: opentext/vertica-k8s # Docker image repository for Vertica
-    tag: latest # Image tag/version
+    repository: opentext/vertica-k8s:latest # Docker image repository for Vertica
 
   # Local storage information for the VerticaDB
   local:
