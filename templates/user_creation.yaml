@@ -1,0 +1,25 @@
+{{- if .Values.verticaJob.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.verticaJob.metadataName }} 
+  namespace: {{ .Values.namespace }} 
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ .Values.verticaJob.serviceAccountName }} 
+      containers:
+      - name: create-user
+        image: bitnami/kubectl:latest 
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "Starting user creation process..."
+          # Create the user in Vertica dynamically
+          kubectl exec -it {{ .Values.verticaJob.podName }} -n {{ .Values.namespace }} -- vsql -U {{ .Values.verticaJob.dbAdminUser }} -w '{{ .Values.verticaJob.dbAdminPassword }}' -c "CREATE USER {{ .Values.verticaJob.newUserName }} IDENTIFIED BY '{{ .Values.verticaJob.newUserPassword }}';"
+          
+          # Grant privileges to the user for the schema
+          kubectl exec -it {{ .Values.verticaJob.podName }} -n {{ .Values.namespace }} -- vsql -U {{ .Values.verticaJob.dbAdminUser }} -w '{{ .Values.verticaJob.dbAdminPassword }}' -c "GRANT {{ .Values.verticaJob.privileges }} ON SCHEMA {{ .Values.verticaJob.schemaName }} TO {{ .Values.verticaJob.newUserName }};"
+          echo "User creation and schema privilege assignment completed."
+      restartPolicy: Never
+{{- end }}
