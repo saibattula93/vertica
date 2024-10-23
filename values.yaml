@@ -22,24 +22,24 @@ verticaDB:
     requestSize: "20Gi" # Define the local storage size
 
   communal:
-    path: "/home/test/vertica/vertica4" # Define the communal storage path
+    path: "/home/test/vertica/vertica6" # Define the communal storage path
 
   volumeMounts:
-    communalStorageMountPath: "/home/test/vertica/vertica4" # Define the communal storage mount path
+    communalStorageMountPath: "/home/test/vertica/vertica6" # Define the communal storage mount path
 
   volumes:
     pvcClaimName: verticadb-pvc # Define the PVC claim name
 
 
 persistentVolume:
-  name: my-pv
+  name: verticadb-pv
   storageClassName: longhorn
   capacity:
     storage: 120Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/home/test/vertica/vertica4"
+    path: "/home/test/vertica/vertica6"
   nodeAffinity:
     operator: In  # Could be "In", "NotIn", etc.
     values:
@@ -79,12 +79,12 @@ verticaRestore:
   local:
     requestSize: "10Gi"  # Requested size for local storage
   communal:
-    path: "/home/test/vertica/vertica5"  # Communal storage path
+    path: "/home/test/vertica/vertica6"  # Communal storage path
   subcluster:
     name: primary         # Subcluster name
     size: 3               # Number of subcluster nodes
   volumes:
-    mountPath: "/home/test/vertica/vertica5"  # Mount path for communal storage
+    mountPath: "/home/test/vertica/vertica6"  # Mount path for communal storage
     persistentVolumeClaim: verticadb-pvc      # PVC name for communal storage
 
 
