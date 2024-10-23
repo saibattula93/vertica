@@ -2,30 +2,31 @@ apiVersion: vertica.com/v1
 kind: VerticaDB
 metadata:
   name: {{ .Values.verticaDB.metadata.name }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.namespace | default "default" }} # Optional: namespace can be defined in values.yaml or default to "default"
 spec:
   subclusters:
-    - name: {{ .Values.verticaDB.subclusters.sc1.name }}
-      size: {{ .Values.verticaDB.subclusters.sc1.size }}
-      serviceType: {{ .Values.verticaDB.subclusters.sc1.serviceType }}
+{{- range .Values.verticaDB.subclusters }}
+    - name: {{ .name }}
+      size: {{ .size }}
+      serviceType: {{ .serviceType }}
       resources:
         limits:
-          cpu: {{ .Values.verticaDB.subclusters.resources.limits.cpu }}
-          memory: {{ .Values.verticaDB.subclusters.resources.limits.memory }}
+          cpu: "{{ .resources.limits.cpu }}"
+          memory: "{{ .resources.limits.memory }}"
         requests:
-          cpu: {{ .Values.verticaDB.subclusters.resources.requests.cpu }}
-          memory: {{ .Values.verticaDB.subclusters.resources.requests.memory }}
-  image: {{ .Values.verticaDB.image.repository }}
-  tag: {{ .Values.verticaDB.image.tag }}
+          cpu: "{{ .resources.requests.cpu }}"
+          memory: "{{ .resources.requests.memory }}"
+{{- end }}
+  image:
+    repository: {{ .Values.verticaDB.image.repository }}:{{ .Values.verticadb.image.tag }}
   local:
-    requestSize: {{ .Values.verticaDB.local.requestSize }}
+    requestSize: "{{ .Values.verticaDB.local.requestSize }}"
   communal:
-    path: {{ .Values.verticaDB.communal.path }}
+    path: "{{ .Values.verticaDB.communal.path }}"
   volumeMounts:
     - name: communal-storage
-      mountPath: {{ .Values.verticaDB.volumeMounts.communalStorageMountPath }}
+      mountPath: "{{ .Values.verticaDB.volumeMounts.communalStorageMountPath }}"
   volumes:
     - name: communal-storage
       persistentVolumeClaim:
         claimName: {{ .Values.verticaDB.volumes.pvcClaimName }}
-        
