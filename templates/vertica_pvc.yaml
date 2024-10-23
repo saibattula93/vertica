@@ -1,12 +1,14 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: verticadb-pvc
-  namespace: vertica
+  name: {{ .Values.persistentVolumeClaim.name }}
+  namespace: {{ .Values.namespace }}
 spec:
-  storageClassName: longhorn
+  storageClassName: {{ .Values.persistentVolumeClaim.storageClassName }}
   accessModes:
-    - ReadWriteOnce
+{{- range .Values.persistentVolumeClaim.accessModes }}
+    - {{ . }}
+{{- end }}
   resources:
     requests:
-      storage: {{ .Values.persistentVolumeClaim.spec.resources.requests.storage }}
+      storage: {{ .Values.persistentVolumeClaim.resources.requests.storage }}
