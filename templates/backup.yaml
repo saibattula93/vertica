@@ -1,0 +1,31 @@
+{{- if .Values.verticaBackup.cronJob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.verticaBackup.cronJob.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  schedule: "{{ .Values.verticaBackup.cronJob.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ .Values.verticaBackup.cronJob.serviceAccountName }}
+          containers:
+          - name: vertica-backup
+            image: bitnami/kubectl:latest
+            command: ["/bin/bash", "-c"]
+            args:
+              - |
+                echo "Starting backup process..."
+                DATE=$(date +'%Y_%m_%d_%H_%M_%S')
+
+                # Create archive with dynamic name
+                kubectl exec -it {{ .Values.verticaBackup.cronJob.databasePod }} -n {{ .Values.namespace }} -- vsql -w {{ .Values.verticaBackup.cronJob.password }} -c "CREATE ARCHIVE {{ .Values.verticaBackup.cronJob.archivePrefix }}_${DATE};" || { echo "Failed to create archive"; exit 1; }
+
+                # Save restore point for the created archive
+                kubectl exec -it {{ .Values.verticaBackup.cronJob.databasePod }} -n {{ .Values.namespace }} -- vsql -w {{ .Values.verticaBackup.cronJob.password }} -c "SAVE RESTORE POINT TO ARCHIVE {{ .Values.verticaBackup.cronJob.archivePrefix }}_${DATE};" || { echo "Failed to save restore point"; exit 1; }
+
+                echo "Backup process completed successfully."
+          restartPolicy: OnFailure
+{{- end }}
