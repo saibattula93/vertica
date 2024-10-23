@@ -1,34 +1,43 @@
 namespace: "vertica"
+# Metadata for the VerticaDB
 verticaDB:
   metadata:
-    name: verticadb # Define the metadata name
+    name: verticadb # Name of the VerticaDB instance
+
+  # Define subclusters for the VerticaDB
   subclusters:
-    sc1:
-      name: sc1 # Define the name of the subcluster
-      size: 3 # Define the size of the subcluster
-      serviceType: NodePort # Define the service type
-    resources:
-      limits:
-        cpu: "2" # Define the CPU limit for the subcluster
-        memory: "2Gi" # Define the memory limit for the subcluster
-      requests:
-        cpu: "1" # Define the CPU request for the subcluster
-        memory: "1Gi" # Define the memory request for the subcluster
+    - name: sc1 # Name of the first subcluster
+      size: 3 # Number of instances in this subcluster
+      serviceType: NodePort # Service type for the subcluster
+      resources:
+        limits:
+          cpu: "2" # CPU limit for the subcluster
+          memory: "2Gi" # Memory limit for the subcluster
+        requests:
+          cpu: "1" # CPU request for the subcluster
+          memory: "1Gi" # Memory request for the subcluster
+
+  # Image information for the VerticaDB
   image:
-    repository: opentext/vertica-k8s # Define the image repository for Vertica
-    tag: latest # Define the image tag
+    repository: opentext/vertica-k8s # Docker image repository for Vertica
+    tag: latest # Image tag/version
 
+  # Local storage information for the VerticaDB
   local:
-    requestSize: "20Gi" # Define the local storage size
+    requestSize: "20Gi" # Amount of local storage to request
 
+  # Communal storage information for the VerticaDB
   communal:
-    path: "/home/test/vertica/vertica6" # Define the communal storage path
+    path: "/home/test/vertica/vertica6" # Path to communal storage
 
+  # Volume mounts for the communal storage
   volumeMounts:
-    communalStorageMountPath: "/home/test/vertica/vertica6" # Define the communal storage mount path
+    communalStorageMountPath: "/home/test/vertica/vertica6" # Mount path for communal storage
 
+  # Volumes definition for the PersistentVolumeClaim
   volumes:
-    pvcClaimName: verticadb-pvc # Define the PVC claim name
+    pvcClaimName: verticadb-pvc # PersistentVolumeClaim name
+
 
 
 persistentVolume:
