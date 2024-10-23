@@ -1,0 +1,29 @@
+{{- if .Values.verticaRestore.enabled }}
+apiVersion: vertica.com/v1
+kind: VerticaDB
+metadata:
+  name: {{ .Values.verticaRestore.name }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+    vertica.com/ignore-cluster-lease: "{{ .Values.verticaRestore.ignoreClusterLease }}"
+spec:
+  initPolicy: {{ .Values.verticaRestore.initPolicy }}    # Init policy for restoring the database
+  restorePoint:
+    archive: "{{ .Values.verticaRestore.restorePoint.archive }}"   # Archive name to restore from
+    index: {{ .Values.verticaRestore.restorePoint.index }}         # Restore point index
+  image: {{ .Values.verticaRestore.image }}
+  local:
+    requestSize: "{{ .Values.verticaRestore.local.requestSize }}"
+  communal:
+    path: "{{ .Values.verticaRestore.communal.path }}"
+  subclusters:
+  - name: {{ .Values.verticaRestore.subcluster.name }}
+    size: {{ .Values.verticaRestore.subcluster.size }}              # Number of nodes in the subcluster
+  volumeMounts:
+    - name: communal-storage
+      mountPath: "{{ .Values.verticaRestore.volumes.mountPath }}"
+  volumes:
+    - name: communal-storage
+      persistentVolumeClaim:
+        claimName: {{ .Values.verticaRestore.volumes.persistentVolumeClaim }}
+{{- end }}
