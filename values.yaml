@@ -18,8 +18,7 @@ verticaDB:
           memory: "1Gi" # Memory request for the subcluster
 
   # Image information for the VerticaDB
-  image:
-    repository: opentext/vertica-k8s:latest # Docker image repository for Vertica
+  image: opentext/vertica-k8s:latest # Docker image repository for Vertica
 
   # Local storage information for the VerticaDB
   local:
