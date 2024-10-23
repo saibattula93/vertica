@@ -1,20 +1,110 @@
+namespace: "vertica"
 verticaDB:
+  metadata:
+    name: verticadb # Define the metadata name
   subclusters:
-      resources:
-        limits:
-          cpu: "3"
-          memory: "30Gi"
-        requests:
-          cpu: "2"
-          memory: "10Gi"
+    sc1:
+      name: sc1 # Define the name of the subcluster
+      size: 3 # Define the size of the subcluster
+      serviceType: NodePort # Define the service type
+    resources:
+      limits:
+        cpu: "2" # Define the CPU limit for the subcluster
+        memory: "2Gi" # Define the memory limit for the subcluster
+      requests:
+        cpu: "1" # Define the CPU request for the subcluster
+        memory: "1Gi" # Define the memory request for the subcluster
+  image:
+    repository: opentext/vertica-k8s # Define the image repository for Vertica
+    tag: latest # Define the image tag
+
+  local:
+    requestSize: "20Gi" # Define the local storage size
+
+  communal:
+    path: "/home/test/vertica/vertica4" # Define the communal storage path
+
+  volumeMounts:
+    communalStorageMountPath: "/home/test/vertica/vertica4" # Define the communal storage mount path
+
+  volumes:
+    pvcClaimName: verticadb-pvc # Define the PVC claim name
+
 
 persistentVolume:
-  spec:
-    capacity:
-      storage: 500Gi
+  name: my-pv
+  storageClassName: longhorn
+  capacity:
+    storage: 120Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/test/vertica/vertica4"
+  nodeAffinity:
+    operator: In  # Could be "In", "NotIn", etc.
+    values:
+      - k8s-node2
+
 
 persistentVolumeClaim:
-  spec:
-    resources:
-      requests:
-        storage: 500Gi
+  name: verticadb-pvc
+  storageClassName: longhorn
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 120Gi
+
+
+verticaBackup:
+  cronJob:
+    enabled: true
+    name: vertica-backup
+    schedule: "*/5 * * * *"  # Schedule for every 5 minutes
+    serviceAccountName: vertica-backup
+    databasePod: verticadb-sc1-0  # Pod name of the Vertica database
+    password: "1234"              # Password for vsql authentication
+    archivePrefix: nightly         # Prefix for archive names
+
+
+verticaRestore:
+  enabled: true
+  name: vdb-restore
+  ignoreClusterLease: "true"
+  initPolicy: Revive   # This sets the restore policy
+  restorePoint:
+    archive: "nightly"   # The archive you created earlier
+    index: 1             # The restore point index (update accordingly)
+  image: opentext/vertica-k8s:latest  # Vertica image to use
+  local:
+    requestSize: "10Gi"  # Requested size for local storage
+  communal:
+    path: "/home/test/vertica/vertica5"  # Communal storage path
+  subcluster:
+    name: primary         # Subcluster name
+    size: 3               # Number of subcluster nodes
+  volumes:
+    mountPath: "/home/test/vertica/vertica5"  # Mount path for communal storage
+    persistentVolumeClaim: verticadb-pvc      # PVC name for communal storage
+
+
+
+verticaJob:
+  enabled: true
+  metadataName: vertica-create-user # Metadata name for the Job resource
+  serviceAccountName: vertica-backup # Service account to use for the Job
+  
+  # Vertica pod details
+  podName: verticadb-sc1-0 # Pod name where the VerticaDB instance is running
+  
+  # Vertica DB admin details
+  dbAdminUser: dbadmin # Vertica admin user
+  dbAdminPassword: '1234' # Vertica admin user password
+  
+  # New user creation details
+  newUserName: test1 # New user to create in Vertica
+  newUserPassword: '12345' # Password for the new user
+  
+  # Schema privileges for the new user
+  schemaName: public # The schema for which privileges are granted
+  privileges: "SELECT, INSERT, UPDATE" # Privileges to assign to the new user
