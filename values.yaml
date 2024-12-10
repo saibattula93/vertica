@@ -65,7 +65,7 @@ persistentVolumeClaim:
 
 verticaBackup:
   cronJob:
-    enabled: true
+    enabled: false
     name: vertica-backup
     schedule: "*/5 * * * *"  # Schedule for every 5 minutes
     serviceAccountName: vertica-backup
